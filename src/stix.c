@@ -1154,6 +1154,15 @@ int main(int argc, char **argv)
                             errx(EX_DATAERR,
                                  "Error adding STIX_ONE to info field.\n");
 
+                        ret = bcf_update_info_int32(hdr,
+                                                    line,
+                                                    "STIX_ONE_MIN_READS",
+                                                    &min_supporting_reads,
+                                                    1);
+                        if (ret != 0)
+                            errx(EX_DATAERR,
+                                "Error adding STIX_ONE_MIN_READS to info field.\n");
+                               
                         uint32_t quants[3] = {Q1, Q2, Q3};
                         ret = bcf_update_info_int32(hdr,
                                                     line,
@@ -1281,26 +1290,11 @@ int main(int argc, char **argv)
                                           num_samples,
                                           &sample_alt_depths,
                                           i);
-                // fprintf(stderr, "num_sample_alt_depths:%d\n",
-                //         num_sample_alt_depths);
-
                 /*
                 from xinchang
                 sample_alt_depths[0].first Pairend count for the first sample
                 sample_alt_depths[0].second Split count for the first sample
                 */
-                // fprintf(stderr, "sample_ids:%p\n",
-                //         (void *)sample_ids);
-
-                // fprintf(stderr, "sample_alt_depths->first:%d\n", sample_alt_depths[1].first);
-                // fprintf(stderr, "sample_alt_depths->second:%d\n", sample_alt_depths[1].second);
-
-                // fprintf(stderr,"num_sample_alt_depths:%d\nsample_ids:%d\nsample_alt_depths:%d,%d\n",
-                // num_sample_alt_depths,
-                // sample_ids[0],
-                // sample_alt_depths->first,
-                // sample_alt_depths->second);
-                // gi_all[i] = gi;
                 sample_ids_all[i] = sample_ids;
                 num_sample_alt_depths_all[i] = num_sample_alt_depths;
                 sample_alt_depths_all[i] = sample_alt_depths;
@@ -1381,19 +1375,16 @@ int main(int argc, char **argv)
                 for (int i = 0; i < sharding_arr_length; i++)
                 {
                     /*Individual search in one shard*/
-                    // fprintf(stderr,"i=%d,sharding_arr[i].stixdb_path=%s",i,sharding_arr[i].stixdb_path);
                     char *ped_db_file_name_shard = sharding_arr[i].stixdb_path;
                     char *index_dir_name_shard = sharding_arr[i].giggle_path;
 
                     uint32_t num_samples = 0;
                     uint32_t *sample_ids = NULL;
-                    // fprintf(stderr,"%d,index_dir_name_shard:%s\n",i,index_dir_name_shard);
                     if (F_is_set == 1)
                         num_samples = ped_get_matching_sample_ids(ped_db_file_name_shard,
                                                                   filter,
                                                                   &sample_ids);
                     struct giggle_index *gi = NULL;
-                    // struct giggle_index *gi = NULL;
                     struct uint_pair *sample_alt_depths = NULL;
 
                     uint32_t num_sample_alt_depths =
@@ -1706,7 +1697,7 @@ int main(int argc, char **argv)
                                                 1);
                     if (ret != 0)
                         errx(EX_DATAERR,
-                             "Error adding STIX_ONE to info field.\n");
+                             "Error adding STIX_ONE_MIN_READS to info field.\n");
 
                     uint32_t quants[3] = {Q1, Q2, Q3};
                     ret = bcf_update_info_int32(hdr,
